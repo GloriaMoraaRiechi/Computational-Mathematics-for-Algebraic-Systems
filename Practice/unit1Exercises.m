@@ -320,17 +320,66 @@ grid on;
 matrixElements = A8(:);
 
 subplot(2, 2, 4);
-histogram(matrixElements);
+histogram(matrixElements, facecolor="yellow");
 title('Histogram of all elements in matrix A8');
 xlabel('Column index');
 ylabel('Row Index');
 grid on;
 
+%% RESHAPE
+clc
+A12 = 1:20;
+B12 = reshape(A12, [5,4]);
+
+A13 = magic(4);;
+B13 = reshape(A13, [], 2);  %Reshapes the matrix A13 into a matrix that has 2 columns [] give for the first dimension to let reshape automatically calculate the appropriate number of rows
+
+%Reshape multidimensional array into matrix
+rng default  %Resets the random number generator setting to worker default values
+A14 = rand(2,2,3);  %Generates a 3D array A14 of random numbers between 0 and 1, 2rows, 2columns and 3 number of slices/layers
+B14 = reshape(A14, 6,2);
+
+%% FLIP - Flips order of elements
+clc
+A15 = randi(100, 6, 6);
+B15C = flip(A15);   %returns an array the same size as A15 but with the order of elements reversed column-wise
+B15R = flip(A15, 2); %returns an array the same size as A15 but with the order of elements reversed row-wise
+
+%Create a diagonal matrix, A16.
+A16 = diag([100 200 300 400 500]);
+flip(A16);
+flip(A16, 2);
 
 
+%Create a 1-by-3-by-2 array.
+A17 = zeros(1,3,2);
+A17(:,:,1) = [1 2 3];
+A17(:,:,2) = [4 5 6];
+B17 = flip(A17);
+
+B173 = flip(A17, 3);
 
 
+%Create a 3-by-2 cell array
+A = {'foo',1000; 999,true; 'aaa','bbb'}
+B = flip(A,2)
+%% 
+a = 3;
+b = 6;
+iterations = 0; %A counter for the number of iterations is initailized
 
+while (a<20)
+    a = a + b;
+    b = b - 1;
+    a
+    iterations = iterations + 1;  %Increments the iterations counter
+
+    if iterations > 20  %Check if the loops exceeds 20 iterations
+        disp('An infinite loop has been detected, 20 iterations exceeded');
+        break;  %Exit the loop if it exceed 20 iterations
+    end
+end
+fprintf('The total number of iterations is %d\n', iterations)
 
 
 
