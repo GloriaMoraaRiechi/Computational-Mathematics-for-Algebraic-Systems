@@ -13,7 +13,8 @@ X = zeros(N, 1);
 
 aug = [A B];  % Augmented matrix
 
-operation_count = 0;  % Initialize counter for the number of operations
+operation_count_total = 0;  % Initialize counter for total number of operations
+operation_count_upper = 0;  % Initialize counter for operations in reduction to upper triangular form
 
 % Forward elimination with partial pivoting
 for j = 1:N-1
@@ -39,14 +40,14 @@ for j = 1:N-1
         m = aug(i, j) / aug(j, j);  % Multiplier
         aug(i, :) = aug(i, :) - m * aug(j, :);  % Row operation
         
-        % Count operations
-        operation_count = operation_count + 1;  % for the division (m = aug(i,j) / aug(j,j))
-        operation_count = operation_count + 1;  % for the multiplication (m * aug(j,:))
-        operation_count = operation_count + N;  % for the N subtractions (aug(i,:) - m * aug(j,:))
+        % Count operations for upper triangular reduction
+        operation_count_upper = operation_count_upper + 1;  % for the division (m = aug(i,j) / aug(j,j))
+        operation_count_upper = operation_count_upper + 1;  % for the multiplication (m * aug(j,:))
+        operation_count_upper = operation_count_upper + N;  % for the N subtractions (aug(i,:) - m * aug(j,:))
         
         % Display the operation details
         fprintf('Operation %d: Row %d = Row %d - (%.2f) * Row %d\n', ...
-            operation_count, i, i, m, j);
+            operation_count_upper, i, i, m, j);
         
         % Display the updated augmented matrix after each row operation
         disp('Updated Augmented Matrix:');
@@ -56,20 +57,23 @@ end
 
 % Backward substitution
 X(N) = aug(N, N + 1) / aug(N, N);  % Last variable
-operation_count = operation_count + 1;  % Count the division for last variable
+operation_count_total = operation_count_total + 1;  % Count the division for last variable
 
 for k = N-1:-1:1
     % Count operations for each variable being calculated
-    operation_count = operation_count + (N - k);  % Multiplications for (aug(k, k+1:N) * X(k+1:N))
-    c = 1 / aug(k, k);
-    X(k) = (aug(k, N + 1) - aug(k, k + 1:N) * X(k + 1:N)) * c; 
-    operation_count = operation_count + 1;  % Count the division for X(k)
+    operation_count_total = operation_count_total + (N - k);  % Multiplications for (aug(k, k+1:N) * X(k+1:N))
+    X(k) = (aug(k, N + 1) - aug(k, k + 1:N) * X(k + 1:N)) / aug(k, k);  % Corrected order of operations
+    operation_count_total = operation_count_total + 1;  % Count the division for X(k)
 end
 
 % Display the solution vector X
 disp('Solution X:');
 disp(X);
 
+% Display the total number of floating-point operations for upper triangular reduction
+disp('Total number of floating-point operations for upper triangular reduction:');
+disp(operation_count_upper);
+
 % Display the total number of floating-point operations performed
 disp('Total number of floating-point operations performed:');
-disp(operation_count);
+disp(operation_count_total + operation_count_upper);  % Sum of upper triangular reduction and backward substitution
